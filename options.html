@@ -1,0 +1,283 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <meta name='viewport' content='width=device-width, initial-scale=1'/>
+  <title>Speed Savings Tracker Analytics</title>
+  <link rel='stylesheet' href='options.css'/>
+</head>
+<body>
+  <main class='page-shell'>
+    <header class='page-header'>
+      <div class='page-title-wrap'>
+        <div class='brand-row'>
+          <div class='brand-mark' aria-hidden='true'>▶</div>
+          <div>
+            <div class='eyebrow'>Speed Savings Tracker</div>
+            <h1>Analytics and settings</h1>
+          </div>
+        </div>
+        <p class='subtle'>Hardcoded tracking rule: everything above 1.00× is counted. This build changes presentation only; stored data remains backward compatible with older builds.</p>
+      </div>
+      <div class='header-actions'>
+        <button id='exportJsonButton' class='button' type='button'>Export JSON</button>
+        <button id='exportCsvButton' class='button' type='button'>Export CSV</button>
+        <label class='button file-button' for='importInput'>Import JSON</label>
+        <input id='importInput' type='file' accept='application/json'/>
+      </div>
+    </header>
+
+    <nav class='quick-nav'>
+      <a href='#overviewSection' class='quick-nav-link'>Overview</a>
+      <a href='#timelineSection' class='quick-nav-link'>Timeline</a>
+      <a href='#breakdownsSection' class='quick-nav-link'>Breakdowns</a>
+      <a href='#sourcesSection' class='quick-nav-link'>Sources</a>
+      <a href='#historySection' class='quick-nav-link'>History</a>
+      <a href='#settingsSection' class='quick-nav-link'>Settings</a>
+    </nav>
+
+    <section id='overviewSection' class='section-shell'>
+      <div class='section-heading'>
+        <div>
+          <div class='section-kicker'>Overview</div>
+          <h2>Headline metrics</h2>
+        </div>
+      </div>
+      <section class='hero-grid' id='heroGrid'></section>
+    </section>
+
+    <section id='timelineSection' class='card feature-card'>
+      <div class='section-head'>
+        <div>
+          <div class='section-kicker'>Timeline</div>
+          <h2>Speed timeline</h2>
+          <p>Average playback speed over time. The stroke color changes by source, video, or page.</p>
+        </div>
+        <div class='segmented segmented-animated' id='analyticsRangeButtons'>
+          <span class='segmented-indicator' id='analyticsRangeIndicator' aria-hidden='true'></span>
+          <button class='segmented-button active' data-range='21600000' type='button'>6h</button>
+          <button class='segmented-button' data-range='86400000' type='button'>24h</button>
+          <button class='segmented-button' data-range='604800000' type='button'>7d</button>
+          <label class='segmented-custom' id='customRangeChip'>
+            <span class='segmented-custom-label'>Custom</span>
+            <input id='customRangeDays' type='number' min='1' max='365' step='1' value='14' inputmode='numeric' aria-label='Custom timeline days'/>
+            <span class='segmented-custom-suffix'>d</span>
+          </label>
+        </div>
+      </div>
+      <div class='timeline-meta-row'>
+        <div id='analyticsRangeCaption' class='timeline-caption'>Showing the last 6 hours</div>
+        <div class='timeline-hint'>Change the range for a different playback-speed window.</div>
+      </div>
+      <div id='analyticsTimeline' class='chart-box chart-large'></div>
+      <div id='analyticsLegend' class='legend-row'></div>
+    </section>
+
+    <section id='breakdownsSection' class='section-shell'>
+      <div class='section-heading'>
+        <div>
+          <div class='section-kicker'>Breakdowns</div>
+          <h2>Pattern analysis</h2>
+        </div>
+      </div>
+      <section class='dashboard-grid'>
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>Rate distribution</h2>
+              <p>Content consumed while above 1×.</p>
+            </div>
+          </div>
+          <div id='histogram' class='bar-list'></div>
+        </section>
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>By weekday</h2>
+              <p>When you tend to save the most time.</p>
+            </div>
+          </div>
+          <div id='weekdayBars' class='bar-list'></div>
+        </section>
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>By hour</h2>
+              <p>Saved time by local hour.</p>
+            </div>
+          </div>
+          <div id='hourBars' class='bar-list compact'></div>
+        </section>
+      </section>
+    </section>
+
+    <section id='sourcesSection' class='section-shell'>
+      <div class='section-heading'>
+        <div>
+          <div class='section-kicker'>Sources</div>
+          <h2>Source and site leaderboards</h2>
+        </div>
+      </div>
+      <section class='dashboard-grid wide'>
+        <section class='card top-sources-card'>
+          <div class='section-head'>
+            <div>
+              <h2>Top sources</h2>
+              <p>Individual videos and pages, not just hostnames.</p>
+            </div>
+            <div class='table-actions'>
+              <input id='sourceSearch' type='search' placeholder='Filter sources'/>
+              <select id='sourceSort'>
+                <option value='saved'>Saved time</option>
+                <option value='rate'>Average speed</option>
+                <option value='sessions'>Sessions</option>
+                <option value='recent'>Most recent</option>
+                <option value='name'>Name</option>
+              </select>
+            </div>
+          </div>
+          <div class='table-wrap top-sources-table-wrap'>
+            <table>
+              <thead>
+                <tr><th>Source</th><th>Saved</th><th>Avg speed</th><th>Peak</th><th>Sessions</th><th>Last seen</th></tr>
+              </thead>
+              <tbody id='sourceTableBody'></tbody>
+            </table>
+          </div>
+        </section>
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>Top sites</h2>
+              <p>Hostname-level aggregates.</p>
+            </div>
+            <div class='table-actions'>
+              <input id='siteSearch' type='search' placeholder='Filter sites'/>
+              <select id='siteSort'>
+                <option value='saved'>Saved time</option>
+                <option value='rate'>Average speed</option>
+                <option value='sessions'>Sessions</option>
+                <option value='watch'>Tracked watch</option>
+                <option value='name'>Name</option>
+              </select>
+            </div>
+          </div>
+          <div class='table-wrap'>
+            <table>
+              <thead>
+                <tr><th>Site</th><th>Saved</th><th>Tracked watch</th><th>Avg speed</th><th>Peak</th><th>Sessions</th></tr>
+              </thead>
+              <tbody id='siteTableBody'></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section id='historySection' class='section-shell'>
+      <div class='section-heading'>
+        <div>
+          <div class='section-kicker'>History</div>
+          <h2>Recent activity</h2>
+        </div>
+      </div>
+      <section class='dashboard-grid wide'>
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>Last 30 days</h2>
+              <p>Saved time by day.</p>
+            </div>
+          </div>
+          <div id='dailyChart' class='daily-chart'></div>
+        </section>
+        <section class='card sessions-card'>
+          <div class='section-head'>
+            <div>
+              <h2>Tracked sessions</h2>
+              <p>Recent history, best bursts, and milestones.</p>
+            </div>
+            <div class='table-actions'>
+              <input id='sessionSearch' type='search' placeholder='Filter sessions'/>
+              <select id='sessionSort'>
+                <option value='recent'>Most recent</option>
+                <option value='saved'>Most saved</option>
+                <option value='rate'>Highest avg speed</option>
+              </select>
+            </div>
+          </div>
+          <div class='sessions-scroll-area'>
+            <div id='recentSessions' class='session-list embedded-scroll'></div>
+            <div class='divider'></div>
+            <div id='achievementList' class='session-list embedded-scroll'></div>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section id='settingsSection' class='section-shell'>
+      <div class='section-heading'>
+        <div>
+          <div class='section-kicker'>Settings</div>
+          <h2>Tracking controls and storage</h2>
+        </div>
+      </div>
+      <section class='settings-grid'>
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>Tracking settings</h2>
+              <p>Tracking threshold is fixed to &gt;1×. These controls affect retention, privacy, and presentation only.</p>
+            </div>
+            <button id='saveSettingsButton' class='button button-primary' type='button'>Save settings</button>
+          </div>
+          <div class='form-grid'>
+            <label><span>Toolbar badge</span><select id='badgeMode'><option value='off'>Off</option><option value='today_saved'>Today's saved time</option><option value='week_saved'>7-day saved time</option><option value='total_saved'>All-time saved time</option><option value='avg_speed'>Average tracked speed</option></select></label>
+            <label><span>Keep daily history</span><select id='keepDays'><option value='30'>30 days</option><option value='60'>60 days</option><option value='120'>120 days</option><option value='180'>180 days</option><option value='365'>365 days</option></select></label>
+            <label><span>Session history limit</span><select id='sessionHistoryLimit'><option value='40'>40 sessions</option><option value='80'>80 sessions</option><option value='120'>120 sessions</option><option value='180'>180 sessions</option><option value='300'>300 sessions</option><option value='500'>500 sessions</option></select></label>
+            <label><span>Timeline retention</span><select id='timelineRetentionDays'><option value='1'>1 day</option><option value='3'>3 days</option><option value='7'>7 days</option><option value='14'>14 days</option><option value='30'>30 days</option><option value='60'>60 days</option></select></label>
+            <label class='toggle-row'><input id='trackOnlyVisible' type='checkbox'/><span>Only track when the tab is visible</span></label>
+            <label class='toggle-row'><input id='storePageDetails' type='checkbox'/><span>Store page titles and URLs in source/session history</span></label>
+          </div>
+          <label class='textarea-block'>
+            <span>Excluded hosts</span>
+            <textarea id='excludedHosts' rows='6' placeholder='one host per line&#10;youtube.com&#10;example.org'></textarea>
+            <div class='help'>Exact hostnames and subdomains are excluded. Example: adding <code>youtube.com</code> also excludes <code>www.youtube.com</code>.</div>
+          </label>
+          <div id='saveStatus' class='status'></div>
+        </section>
+
+        <section class='card'>
+          <div class='section-head'>
+            <div>
+              <h2>Storage + import</h2>
+              <p>Diagnostics, imports, and safety switches.</p>
+            </div>
+          </div>
+          <div class='metric-mini-grid'>
+            <div class='mini-metric'><div class='mini-metric-label'>Approx. storage</div><div class='mini-metric-value' id='storageSizeValue'>0 KB</div></div>
+            <div class='mini-metric'><div class='mini-metric-label'>Timeline points</div><div class='mini-metric-value' id='timelinePointCountValue'>0</div></div>
+            <div class='mini-metric'><div class='mini-metric-label'>Schema version</div><div class='mini-metric-value' id='schemaVersionValue'>4</div></div>
+            <div class='mini-metric'><div class='mini-metric-label'>Recent sessions kept</div><div class='mini-metric-value' id='recentCountValue'>0</div></div>
+          </div>
+          <label class='radio-group'>
+            <span>Import mode</span>
+            <div class='radio-row'>
+              <label><input type='radio' name='importMode' value='replace' checked/> Replace existing data</label>
+              <label><input type='radio' name='importMode' value='merge'/> Merge with existing data</label>
+            </div>
+          </label>
+          <div class='help'>Older exported JSON from previous extension versions is migrated automatically on import. New fields are additive, so legacy totals and history remain usable.</div>
+          <div class='divider'></div>
+          <div class='danger-actions'>
+            <button id='resetButton' class='button button-danger' type='button'>Reset tracked stats</button>
+            <button id='resetEverythingButton' class='button button-danger' type='button'>Reset everything</button>
+          </div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src='shared.js'></script>
+  <script src='options.js'></script>
+</body>
+</html>

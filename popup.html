@@ -1,0 +1,100 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset='utf-8'/>
+  <meta name='viewport' content='width=device-width, initial-scale=1'/>
+  <title>Speed Savings Tracker</title>
+  <link rel='stylesheet' href='popup.css'/>
+</head>
+<body>
+  <main class='popup-shell'>
+    <header class='topbar'>
+      <div class='brand-block'>
+        <div class='brand-mark' aria-hidden='true'>▶</div>
+        <div>
+          <div class='eyebrow'>Speed Savings Tracker</div>
+          <h1>Playback stats</h1>
+          <div class='topbar-subtitle'>Local tracking for HTML5 playback above 1×.</div>
+        </div>
+      </div>
+      <button id='openOptionsButton' class='button button-primary' type='button'>Open analytics</button>
+    </header>
+
+    <section class='primary-metrics'>
+      <article class='primary-card'>
+        <div class='primary-kicker'>Real time</div>
+        <div class='primary-value' id='primaryWall'>0s</div>
+        <div class='primary-label'>Total real time spent</div>
+        <div class='primary-note' id='primaryWallNote'>Actual clock time spent watching</div>
+      </article>
+      <article class='primary-card'>
+        <div class='primary-kicker'>Content</div>
+        <div class='primary-value' id='primaryMedia'>0s</div>
+        <div class='primary-label'>Total content consumed</div>
+        <div class='primary-note' id='primaryMediaNote'>Playback-time equivalent watched</div>
+      </article>
+      <article class='primary-card primary-card-accent'>
+        <div class='primary-kicker'>Saved</div>
+        <div class='primary-value' id='primarySaved'>0s</div>
+        <div class='primary-label'>Total time saved</div>
+        <div class='primary-note' id='primarySavedNote'>Only playback above 1× counts</div>
+      </article>
+    </section>
+
+    <section class='hero-card'>
+      <div class='hero-main'>
+        <div class='hero-label'>Summary</div>
+        <div class='hero-value' id='heroSummary'>0 sessions</div>
+        <div class='hero-meta' id='heroMeta'>Tracking speeds above 1× only</div>
+      </div>
+      <div class='hero-right'>
+        <div class='hero-chip' id='heroEfficiency'>0% efficiency</div>
+        <div class='hero-chip subtle' id='heroEquivalent'>0 class periods</div>
+      </div>
+    </section>
+
+    <section class='panel panel-tight'>
+      <div class='section-label'>Snapshot</div>
+      <div class='metric-grid' id='metricGrid'></div>
+    </section>
+
+    <section class='panel-grid'>
+      <section class='panel'>
+        <div class='panel-head'>
+          <div>
+            <div class='section-label'>Live</div>
+            <h2>Current tab</h2>
+            <p>Detection and tracking status.</p>
+          </div>
+        </div>
+        <div id='liveCard' class='live-card'>Checking current tab…</div>
+        <div class='inline-actions'>
+          <button id='toggleSiteButton' class='button button-secondary' type='button'>Exclude site</button>
+          <label class='toggle'>
+            <input id='visibleOnlyToggle' type='checkbox'/>
+            <span>Visible tab only</span>
+          </label>
+        </div>
+      </section>
+    </section>
+
+    <section class='panel panel-tight'>
+      <div class='panel-head'>
+        <div>
+          <div class='section-label'>Signals</div>
+          <h2>Momentum</h2>
+          <p>Useful summary markers.</p>
+        </div>
+      </div>
+      <div class='signal-grid' id='signalGrid'></div>
+    </section>
+
+    <footer class='footer-actions'>
+      <button id='exportButton' class='button button-secondary' type='button'>Export JSON</button>
+      <button id='resetButton' class='button button-danger' type='button'>Reset stats</button>
+    </footer>
+  </main>
+  <script src='shared.js'></script>
+  <script src='popup.js'></script>
+</body>
+</html>
