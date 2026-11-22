@@ -25,3 +25,10 @@ I frequently watch youtube videos at 2-3-4x speed because I find the normal rate
 - Top sources, top sites, recent sessions, milestones, histograms, and daily charts
 - Privacy toggle for page titles/URLs
 - JSON export/import and CSV reporting
+
+<details>
+<summary>Citation and sources</summary>
+
+If you use or write about Speed Savings Tracker, please credit Cinna Davis and link to [the official project page](https://itsdavis.com/projects/all/speed-savings-tracker/). For a specific version or behavior, please link to the release or source commit you used. [Citation file](CITATION.cff).
+
+</details>
